@@ -1,0 +1,51 @@
+---
+title: "Demo report with Regression Tables"
+author: "Liming Wang"
+date: "10/22/2017"
+#output: rmarkdown::word_document
+output: rmarkdown::html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+tab_path <- "tabs"
+if (!file.exists(tab_path))
+  dir.create(tab_path)
+```
+
+# `mpg` models
+
+```{r, message=FALSE, warning=F}
+require(dplyr)
+require(texreg)
+require(captioner)
+```
+
+```{r table1}
+table_nums <- captioner(prefix = "Table")
+tbl1_cap <- table_nums("mpg_models", "OLS regression for mileage")
+knitr::kable(tibble(x=1, y=2), caption=tbl1_cap)
+htmlreg(list(lm(mpg ~ wt, data=mtcars), 
+             lm(mpg ~ wt + cyl, data=mtcars)), 
+        file=file.path(tab_path, paste0(table_nums("mpg_models", display="cite"), ".html")),
+        doctype = TRUE, html.tag = TRUE, 
+        caption = "", 
+        caption.above = TRUE)
+```
+
+We are interested in modeling `mpg` for our first two models and `r table_nums("mpg_models", display="cite")` shows the results.
+
+# `hp` models
+
+```{r table2}
+tbl2_cap <- table_nums("hp_models", "OLS regression for horse power")
+knitr::kable(tibble(x=1, y=2), caption=tbl2_cap)
+htmlreg(list(lm(hp ~ wt, data=mtcars), 
+             lm(hp ~ wt + cyl, data=mtcars)), 
+        file=file.path(tab_path, paste0(table_nums("hp_models", display="cite"), ".html")),
+        doctype = TRUE, html.tag = TRUE, 
+        caption = "", 
+        caption.above = TRUE)
+```
+
+We are interested in modeling `hp` for our last two models and `r table_nums("hp_models", display="cite")` shows the results.
