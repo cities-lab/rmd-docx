@@ -24,7 +24,8 @@ makeDocxWithFt <- function(ft, docxFile, caption) {
 ##' @param flexTableDocxFiles List of FlexTable docx files as replacements
 ##' @param outputDocxFile The output docx file
 ##' @export
-patchFlexTables <- function(inputDocxFile,tableDocx_path,outputDocxFile) {
+patchFlexTables <- function(inputDocxFile, tableDocx_path, outputDocxFile) {
+  require(dplyr)
   require(glue)
   flexTableDocxFiles <- list.files(tableDocx_path, pattern = ".docx", full.names = T)
   tableNodes_new <- flexTableDocxFiles %>%
@@ -56,9 +57,11 @@ patchFlexTables <- function(inputDocxFile,tableDocx_path,outputDocxFile) {
       if (is.na(currCaptionText))
         return()
       
-      table_num <- sub(pattern = "(^Table [[:digit:]]*):.*$",
-                       replacement="\\1",
-                       currCaptionText)
+      table_num <- stringr::str_extract(currCaptionText, "^Table [\\d\\.]*[\\d]")
+      
+      #table_num <- sub(pattern = "(^Table [[:digit:\\.]]*).*$",
+      #                 replacement="\\1",
+      #                 currCaptionText)
 
       match <- purrr::detect(tableNodes_new, ~ .x$table_num == table_num)
       print(match)
